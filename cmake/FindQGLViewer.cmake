@@ -36,6 +36,7 @@ find_library(QGLVIEWER_LIBRARY_DEBUG
         /usr/local/lib
         /opt/local/lib
         /sw/lib
+        ${QGLVIEWER_INCLUDE_DIR}
         ENV QGLVIEWERROOT
         ENV LD_LIBRARY_PATH
         ENV LIBRARY_PATH
