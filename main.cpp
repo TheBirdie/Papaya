@@ -1,13 +1,13 @@
-#include <QApplication>
-#include <QPushButton>
+#include "Scene.h"
+#include <qapplication.h>
 
-int main(int argc, char *argv[])
+int main(int argc, char** argv)
 {
-    QApplication app(argc, argv);
+  QApplication application(argc,argv);
 
-    QPushButton b;
-    b.setText("Boulibah");
-    b.show();
+  Scene viewer;
+  viewer.setWindowTitle("animation");
+  viewer.show();
 
-    return app.exec();
+  return application.exec();
 }
