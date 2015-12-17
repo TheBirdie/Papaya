@@ -27,7 +27,12 @@ endif(NOT OPENGL_FOUND)
 include_directories(${QGLVIEWER_INCLUDE_DIR})
 
 # Tell CMake to create the helloworld executable
-add_executable(Papaya main.cpp Scene.h Scene.cpp)
+add_executable(Papaya
+        main.cpp 
+        Scene.h
+        Scene.cpp
+        mainwindow.h
+        mainwindow.cpp)
 target_link_libraries(Papaya ${QGLVIEWER_LIBRARY_RELEASE} ${OPENGL_LIBRARIES})
 
 # Use the Widgets module from Qt 5.
