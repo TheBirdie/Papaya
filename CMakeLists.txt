@@ -27,7 +27,13 @@ endif(NOT OPENGL_FOUND)
 include_directories(${QGLVIEWER_INCLUDE_DIR} ${QT_QTXML_INCLUDE_DIR})
 
 # Tell CMake to create the helloworld executable
-add_executable(Papaya main.cpp Scene.h Scene.cpp)
+add_executable(Papaya
+        main.cpp 
+        Scene.h
+        Scene.cpp
+        mainwindow.h
+        mainwindow.cpp)
+
 set(LIBRARIES ${OPENGL_LIBRARIES})
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
