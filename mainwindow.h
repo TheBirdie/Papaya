@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QDockWidget>
+#include <QMenuBar>
 #include "Scene.h"
 
 class MainWindow : public QMainWindow
@@ -12,6 +14,8 @@ public:
     virtual ~MainWindow();
 
     Scene* scene;
+    QDockWidget* dock;
+    QMenuBar* menu;
 
 signals:
 
