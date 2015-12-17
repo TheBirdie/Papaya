@@ -62,18 +62,33 @@ bool Mesh::LoadObjModel(const char *filename)
             int textures[3] = {0};
             int normals[3]  = {0};
             const char* chh=line.c_str();
-            sscanf (chh, "f %i/%i/%i %i/%i/%i %i/%i/%i",
+            if (sscanf(chh, "f %i/%i/%i %i/%i/%i %i/%i/%i",
                     &vertices[0], &textures[0], &normals[0],
                     &vertices[1], &textures[1], &normals[1],
-                    &vertices[2], &textures[2], &normals[2]); //here it read the line start with f and store the corresponding values in the variables
+                    &vertices[2], &textures[2], &normals[2]) != 3*3 &&
+                sscanf(chh, "f %i/%i %i/%i %i/%i",
+                    &vertices[0], &textures[0],
+                    &vertices[1], &textures[1],
+                    &vertices[2], &textures[2]) != 3*2 &&
+                sscanf(chh, "f %i %i %i",
+                    &vertices[0],
+                    &vertices[1],
+                    &vertices[2]) != 3)
+            {
+                qCritical() << "Wrong obj file format on the following line: " << QString::fromStdString(line);
+                return false;
+            }
 
 
             //std::cout<<a<<b<<c<<A<<B<<C;
             for (int i = 0; i < 3; ++i)
             {
-                faceIndex.push_back(vertices[i] - 1);
-                textureIndex.push_back(textures[i] - 1);
-                normalIndex.push_back(normals[i] - 1);
+                if (vertices[0])
+                    faceIndex.push_back(vertices[i] - 1);
+                if (textures[0])
+                    textureIndex.push_back(textures[i] - 1);
+                if (normals[0])
+                    normalIndex.push_back(normals[i] - 1);
             }
         }
     }
