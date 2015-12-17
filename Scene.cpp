@@ -20,7 +20,6 @@ void Scene::draw()
     if (true)
     {
         m_model.Draw();
-        return;
     }
     // Draws a spiral
     const float nbSteps = 200.0;

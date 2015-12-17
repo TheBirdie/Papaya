@@ -98,7 +98,6 @@ find_package(Threads REQUIRED)
 #--------------------------------------------------------------------
 if (UNIX)
     add_definitions(-Wall)
-
     if (BUILD_SHARED_LIBS)
         add_definitions(-fvisibility=hidden)
     endif()

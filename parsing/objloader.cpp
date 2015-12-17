@@ -3,7 +3,7 @@
 #include <cassert>
 #include <iostream>
 #include <GL/glew.h>
-#include <GL/GL.h>
+//#include <GL/GL.h>
 #include <QDebug>
 
 #include "objloader.h"
@@ -70,6 +70,10 @@ bool Mesh::LoadObjModel(const char *filename)
                     &vertices[0], &textures[0],
                     &vertices[1], &textures[1],
                     &vertices[2], &textures[2]) != 3*2 &&
+                sscanf(chh, "f %i//%i %i//%i %i//%i",
+                    &vertices[0], &normals[0],
+                    &vertices[1], &normals[1],
+                    &vertices[2], &normals[2]) != 3*2 &&
                 sscanf(chh, "f %i %i %i",
                     &vertices[0],
                     &vertices[1],
@@ -103,11 +107,14 @@ void Mesh::Draw()
         assert(faceIndex.size() % 3 == 0);
         for (int i = 0; i < faceIndex.size(); ++i)
         {
+            if (normalIndex.size() == faceIndex.size())
+            {
+                int ni = normalIndex[i];
+                if (ni < normals.size())
+                    glNormal3f(normals[ni].x, normals[ni].y, normals[ni].z);
+            }
             int fi = faceIndex[i];
-            int ni = normalIndex[i];
-            //qDebug() << "Vertice #" << fi << "/" << vertices.size();
             assert(fi < vertices.size());
-            glNormal3f(normals[ni].x, normals[ni].y, normals[ni].z);
             glVertex3f(vertices[fi].x, vertices[fi].y, vertices[fi].z);
         }
         glEnd();
