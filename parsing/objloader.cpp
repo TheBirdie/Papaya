@@ -35,6 +35,16 @@ bool Mesh::LoadObjModel(const char *filename)
             vert=glm::vec3(x,y,z);
             vertices.push_back(vert);
         }
+        //check vn for normals
+        if (line.substr(0,3)=="vn ")
+        {
+            std::istringstream v(line.substr(2));
+            glm::vec3 vert;
+            double x,y,z;
+            v>>x;v>>y;v>>z;
+            vert=glm::vec3(x,y,z);
+            normals.push_back(vert);
+        }
         //check for texture co-ordinate
         else if(line.substr(0,2)=="vt")
         {
@@ -63,6 +73,7 @@ bool Mesh::LoadObjModel(const char *filename)
             {
                 faceIndex.push_back(vertices[i] - 1);
                 textureIndex.push_back(textures[i] - 1);
+                normalIndex.push_back(normals[i] - 1);
             }
         }
     }
@@ -73,13 +84,15 @@ void Mesh::Draw()
 {
     if (true) // Full triangles
     {
-        glBegin(GL_LINE_STRIP);
+        glBegin(GL_TRIANGLES);
         assert(faceIndex.size() % 3 == 0);
         for (int i = 0; i < faceIndex.size(); ++i)
         {
             int fi = faceIndex[i];
+            int ni = normalIndex[i];
             //qDebug() << "Vertice #" << fi << "/" << vertices.size();
             assert(fi < vertices.size());
+            glNormal3f(normals[ni].x, normals[ni].y, normals[ni].z);
             glVertex3f(vertices[fi].x, vertices[fi].y, vertices[fi].z);
         }
         glEnd();
