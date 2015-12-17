@@ -4,6 +4,7 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
     scene = new Scene();
+    scene->LoadModel("model.obj");
     setCentralWidget(scene);
 }
 

@@ -1,5 +1,4 @@
-cmake_minimum_required(VERSION 2.8.11)
-
+cmake_minimum_required(VERSION 3.0)
 project(Papaya)
 
 # Find includes in corresponding build directories
@@ -7,7 +6,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 
-# Find the QtWidgets library
+################# FIND EXTERNAL DEPENDENCIES ########################
 find_package(Qt5Widgets)
 find_package(Qt5Core)
 find_package(Qt5Xml)
@@ -16,39 +15,59 @@ find_package(Qt53DQuick)
 find_package(Qt53DRenderer)
 find_package(Qt53DInput)
 find_package(Qt5OpenGL)
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
-find_package(QGLViewer)
+find_package(QGLViewer PATHS ${CMAKE_SOURCE_DIR}/cmake/)
+find_package(OpenGL REQUIRED)
+find_package(GLEW)
+if(NOT GLEW_FOUND AND WIN32)
+    set(GLEW_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/dep/glew/include)
+    set(GLEW_LIBRARIES ${CMAKE_SOURCE_DIR}/dep/glew/lib/glew32.lib)
+    message(WARNING "Using provided glew binaries - for VC14 (${GLEW_LIBRARIES})")
+endif()
 
-FIND_PACKAGE(OpenGL REQUIRED)
-if(NOT OPENGL_FOUND)
-    message(ERROR " OPENGL not found!")
-endif(NOT OPENGL_FOUND)
+# Build GLFW
+find_package(GLFW PATHS ${CMAKE_SOURCE_DIR}/cmake/)
+if (NOT GLFW_FOUND)
+    option(GLFW_USE_INTERNAL "Build internal version of GLFW" ON)
+else()
+    option(GLFW_USE_INTERNAL "Build internal version of GLFW" OFF)
+endif()
 
-include_directories(${QGLVIEWER_INCLUDE_DIR} ${QT_QTXML_INCLUDE_DIR})
+set(GLFW_SOURCE_DIR "${CMAKE_SOURCE_DIR}/dep/glfw/")
+if (GLFW_USE_INTERNAL)
+    ADD_SUBDIRECTORY(${CMAKE_SOURCE_DIR}/dep/glfw)
+    set(GLFW_glfw_LIBRARY glfw)
+endif()
 
-# Tell CMake to create the helloworld executable
+set(INCLUDE_DIRECTORIES ${INCLUDE_DIRECTORIES} ${QGLVIEWER_INCLUDE_DIR})
+set(INCLUDE_DIRECTORIES ${INCLUDE_DIRECTORIES} ${QT_QTXML_INCLUDE_DIR})
+set(INCLUDE_DIRECTORIES ${INCLUDE_DIRECTORIES} ${GLEW_INCLUDE_DIRS})
+set(INCLUDE_DIRECTORIES ${INCLUDE_DIRECTORIES} ${GLFW_INCLUDE_DIR})
+include_directories(${INCLUDE_DIRECTORIES})
+
+################# CREATE THE EXECUTABLE #############################
+file(GLOB GUI_srcs Scene.cpp Scene.h mainwindow.h mainwindow.cpp)
+file(GLOB PARSING_srcs parsing/*.h parsing/*.cpp)
+file(GLOB GLM_srcs glm/*.h) # Headers only library
+
 add_executable(Papaya
         main.cpp 
-        Scene.h
-        Scene.cpp
-        mainwindow.h
-        mainwindow.cpp)
+        ${GUI_srcs} ${PARSING_srcs} ${GLM_srcs})
 
-set(LIBRARIES ${OPENGL_LIBRARIES})
 
+################# CONFIGURE LINKED LIBRAIRIES #######################
+set(LIBRARIES ${LIBRARIES} ${OPENGL_LIBRARIES})
+set(LIBRARIES ${LIBRARIES} ${GLEW_LIBRARIES})
+set(LIBRARIES ${LIBRARIES} ${GLFW_glfw_LIBRARY})
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(LIBRARIES ${LIBRARIES} ${QGLVIEWER_LIBRARY_DEBUG})
 else()
     set(LIBRARIES ${LIBRARIES} ${QGLVIEWER_LIBRARY_RELEASE})
 endif()
 target_link_libraries(Papaya ${LIBRARIES})
-
-# Use the Widgets module from Qt 5.
 qt5_use_modules(Papaya Widgets 3DCore 3DQuick 3DRenderer 3DInput OpenGL)
 
-# Copy QGLViewer2.dll on Windows
+################# PLATFORM SPECIFIC CODE ############################
 if (WIN32)
-
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
         set(QGLVIEWER_DLL_PATH "${QGLVIEWER_INCLUDE_DIR}/QGLViewerd2.dll")
     else()
