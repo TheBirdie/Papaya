@@ -91,6 +91,14 @@ if (UNIX)
 endif()
 
 
+if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND QGLVIEWER_LIBRARY_DEBUG)
+    set(LIBRARIES ${LIBRARIES} ${QGLVIEWER_LIBRARY_DEBUG})
+    set(QGLVIEWER_DLL_PATH "${QGLVIEWER_INCLUDE_DIR}/QGLViewerd2.dll")
+else()
+    set(LIBRARIES ${LIBRARIES} ${QGLVIEWER_LIBRARY_RELEASE})
+    set(QGLVIEWER_DLL_PATH "${QGLVIEWER_INCLUDE_DIR}/QGLViewer2.dll")
+endif()
+
 set(LIBRARIES ${LIBRARIES} ${QGLVIEWER_LIBRARY_RELEASE})
 
 target_link_libraries(Papaya ${LIBRARIES})
@@ -98,11 +106,6 @@ qt5_use_modules(Papaya Widgets 3DCore 3DQuick 3DRenderer 3DInput OpenGL)
 
 ################# PLATFORM SPECIFIC CODE ############################
 if (WIN32)
-    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-        set(QGLVIEWER_DLL_PATH "${QGLVIEWER_INCLUDE_DIR}/QGLViewerd2.dll")
-    else()
-        set(QGLVIEWER_DLL_PATH "${QGLVIEWER_INCLUDE_DIR}/QGLViewer2.dll")
-    endif()
     message(STATUS "[Windows] Will copy QGLViewer DLLs to project run path (${QGLVIEWER_DLL_PATH})")
     add_custom_command(TARGET Papaya PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy "${QGLVIEWER_DLL_PATH}" "${CMAKE_BINARY_DIR}"
