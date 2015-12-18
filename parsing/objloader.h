@@ -11,6 +11,7 @@ class Mesh
     void Release();				// Release the model
     float GetRadius() const { return m_radius; }
     glm::vec3 const& GetCenter() const { return m_center; }
+    bool IsLoaded() const { return vertices.size() && faceIndex.size(); }
 
     std::vector<glm::vec3>  vertices;
     std::vector<glm::vec3>  normals;

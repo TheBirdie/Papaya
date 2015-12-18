@@ -20,11 +20,15 @@ bool Scene::LoadModel(QString const& filename)
 void Scene::draw()
 {
     // If we have a model loaded ...
-    if (true)
-    {
-        glMatrixMode(GL_MODELVIEW);
+    if (m_model.IsLoaded())
         m_model.Draw();
-    }
+    else // Fallback to default-hardcoded model
+        drawSpiral();
+
+}
+
+void Scene::drawSpiral()
+{
     // Draws a spiral
     const float nbSteps = 200.0;
     glBegin(GL_QUAD_STRIP);
@@ -45,7 +49,6 @@ void Scene::draw()
         glVertex3f(r2*c, alt+0.05, r2*s);
       }
     glEnd();
-
 }
 
 void Scene::init()
@@ -81,5 +84,17 @@ void Scene::animate()
 
 QString Scene::helpString() const
 {
-    return QString("blah");
+    return QString("Use SELECT + CLICK to select a 3D point");
+}
+
+
+void Scene::select(const QMouseEvent *event)
+{
+    bool intersect = false;
+    QPoint clickPoint(event->x(), event->y());
+    qglviewer::Vec point = camera()->pointUnderPixel(clickPoint, intersect);
+    if (intersect)
+        qDebug() << "SELECT " << clickPoint << " => (" << point.x << "," << point.y << "," << point.z << ")";
+    else
+        qDebug() << "SELECT " << clickPoint << " => NO INTERSECTION";
 }
