@@ -11,6 +11,9 @@ bool Scene::LoadModel(QString const& filename)
     qDebug() << "Loading model " << filename;
     m_model.LoadObjModel(filename.toStdString().c_str());
     qDebug() << m_model.faceIndex.size() / 3 << "triangles";
+    qDebug() << "Model radius:" << m_model.GetRadius();
+    setSceneRadius(m_model.GetRadius());
+    setSceneCenter(qglviewer::Vec(m_model.GetCenter().x, m_model.GetCenter().y, m_model.GetCenter().z));
     return true;
 }
 
@@ -19,6 +22,7 @@ void Scene::draw()
     // If we have a model loaded ...
     if (true)
     {
+        glMatrixMode(GL_MODELVIEW);
         m_model.Draw();
     }
     // Draws a spiral

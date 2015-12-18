@@ -15,6 +15,7 @@ using namespace std;
 
 bool Mesh::LoadObjModel(const char *filename)
 {
+    float minMaxCoords[6] = {0};
     std::ifstream in(filename, std::ios::in);
     if (!in)
     {
@@ -30,9 +31,14 @@ bool Mesh::LoadObjModel(const char *filename)
         {
             std::istringstream v(line.substr(2));
             glm::vec3 vert;
-            double x,y,z;
-            v>>x;v>>y;v>>z;
-            vert=glm::vec3(x,y,z);
+            double coords[3] = {0};
+            for (int i = 0; i < 3; ++i)
+            {
+                v >> coords[i];
+                minMaxCoords[2*i]   = fmin(minMaxCoords[2*i], coords[i]);
+                minMaxCoords[2*i+1] = fmax(minMaxCoords[2*i+1], coords[i]);
+            }
+            vert=glm::vec3(coords[0], coords[1], coords[2]);
             vertices.push_back(vert);
         }
         //check vn for normals
@@ -95,6 +101,14 @@ bool Mesh::LoadObjModel(const char *filename)
                     normalIndex.push_back(normals[i] - 1);
             }
         }
+    }
+    // Compute model radius
+    for (int i = 0; i < 3; ++i)
+    {
+        float currentRadius = minMaxCoords[2*i+1] - minMaxCoords[2*i];
+        if (currentRadius > m_radius)
+            m_radius = currentRadius;
+        m_center[i] = (minMaxCoords[2*i+1] + minMaxCoords[2*i]) / 2;
     }
     return true;
 }
