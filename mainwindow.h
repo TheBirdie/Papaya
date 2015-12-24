@@ -1,9 +1,12 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QApplication>
 #include <QMainWindow>
 #include <QDockWidget>
 #include <QMenuBar>
+#include <QList>
+#include <QPixmap>
 #include "Scene.h"
 
 class MainWindow : public QMainWindow
@@ -20,6 +23,13 @@ public:
 signals:
 
 public slots:
+
+private:
+    void createMenuBar();
+    void createDocker();
+
+    // List of images
+    QList<QPixmap> imagesList;
 };
 
 #endif // MAINWINDOW_H
