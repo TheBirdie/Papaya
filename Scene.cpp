@@ -53,28 +53,9 @@ void Scene::drawSpiral()
 
 void Scene::init()
 {
-    glMatrixMode(GL_MODELVIEW);
-    glShadeModel( GL_SMOOTH );
-    glClearColor( 0.0f, 0.1f, 0.0f, 0.5f );
-    glClearDepth( 10.0f );
-    //glEnable( GL_DEPTH_TEST );
-    glDepthFunc( GL_LEQUAL );
+    // Nice texture coordinate interpolation
     glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
-
-    GLfloat amb_light[] = { 0.3, 0.3, 0.3, 4.0 };
-    GLfloat diffuse[] = { 0.6, 0.6, 0.6, 1 };
-    GLfloat specular[] = { 0.7, 0.7, 0.3, 1 };
-    glLightModelfv( GL_LIGHT_MODEL_AMBIENT, amb_light );
-    glLightfv( GL_LIGHT0, GL_DIFFUSE, diffuse );
-    glLightfv( GL_LIGHT0, GL_SPECULAR, specular );
-    glEnable( GL_LIGHT0 );
-    glEnable( GL_COLOR_MATERIAL );
-    glShadeModel( GL_SMOOTH );
-    glLightModeli( GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE );
-    glDepthFunc( GL_LEQUAL );
-    //glEnable( GL_DEPTH_TEST );
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
+    m_model.LoadOpenGLTextures();
 }
 
 void Scene::animate()
