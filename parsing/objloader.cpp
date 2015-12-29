@@ -51,7 +51,7 @@ bool Mesh::LoadObjModel(const char *filename)
             vertices.push_back(vert);
         }
         //check vn for normals
-        if (line.substr(0,3)=="vn ")
+        else if (line.substr(0,3)=="vn ")
         {
             std::istringstream v(line.substr(3));
             glm::vec3 vert;
@@ -61,13 +61,15 @@ bool Mesh::LoadObjModel(const char *filename)
             normals.push_back(vert);
         }
         //check for mtl file
-        if (line.substr(0,7)=="mtllib ")
+        else if (line.substr(0,7)=="mtllib ")
         {
+            // Trim the line
+            line.erase(line.find_last_not_of(" \n\r\t")+1);
             if (!LoadMTLFile(path.canonicalPath().toStdString().c_str(), line.substr(7).c_str()))
                 qWarning() << filename << ':' << lineIdx << "Unable to load MTL file";
         }
         //check for mtl file
-        if (line.substr(0,7)=="usemtl ")
+        else if (line.substr(0,7)=="usemtl ")
         {
             std::string textureName(line.substr(7).c_str());
             int textureIdx = -1;
@@ -153,6 +155,8 @@ bool LoadFilePath(const char* path, const char* prefix, std::string const& line,
     if (line.substr(0,strlen(prefix)) == prefix)
     {
         std::string stdcfilename = line.substr(strlen(prefix));
+        // Trim the filename
+        stdcfilename.erase(stdcfilename.find_last_not_of(" \n\r\t")+1);
         fileInfo.setFile(QDir(path), QString::fromStdString(stdcfilename));
         return true;
     }
@@ -163,7 +167,7 @@ bool Mesh::LoadMTLFile(const char* path, const char* filename)
 {
     std::string fullpath = std::string(path) + '/' + filename;
     qDebug() << "... loading" << fullpath.c_str() << "as MTL file";
-    std::ifstream in(fullpath, std::ios::in);
+    std::ifstream in(fullpath.c_str(), std::ios::in);
     if (!in)
         return false;
 
