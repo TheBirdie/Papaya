@@ -30,7 +30,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     imagesList.append(QPixmap("imgTest.png"));
 
     createMenuBar();
-    createDocker();
+    createDock();
+
 }
 
 /*
@@ -54,28 +55,12 @@ void MainWindow::createMenuBar(){
 /*
  * Creation of image display docker
  */
-void MainWindow::createDocker(){
-    dock = new QDockWidget("Image List", this);
+void MainWindow::createDock(){
 
-    QScrollArea* scroll = new QScrollArea(dock);
-    scroll->setWidgetResizable(true);
-    QWidget* container = new QWidget(scroll);
-    QVBoxLayout* layout = new QVBoxLayout(container);
-    dock->setWidget(scroll);
+    dock = new ImageDock("Images List", this);
 
-    for(QList<QPixmap>::iterator img = imagesList.begin(); img != imagesList.end(); img++){
-        QLabel* w = new QLabel(container);
-        w->setPixmap(*img);
-        w->setMinimumHeight(img->height());
-        w->setMargin(5);
-        layout->addWidget(w);
-        container->setMinimumHeight(container->minimumHeight() + img->height());
-    }
-
-    container->setLayout(layout);
-    scroll->setWidget(container);
-    dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     addDockWidget(Qt::RightDockWidgetArea,dock);
+    dock->addImageList(imagesList);
 }
 
 // Penser à détruire les scenes, elles n'ont pas de parents
@@ -112,3 +97,9 @@ void MainWindow::actionOpen(){
     }
 }
 
+/*
+ * Load an image list in the docker
+ */
+void MainWindow::loadImageList(const QList<QPixmap>& imageList){
+
+}
