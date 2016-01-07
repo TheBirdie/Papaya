@@ -30,6 +30,7 @@ signals:
 
 public slots:
     void actionOpen();
+    void displayImg(QPixmap* img);
 
 private:
     void createMenuBar();

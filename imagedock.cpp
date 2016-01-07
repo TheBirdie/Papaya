@@ -3,7 +3,8 @@
 #include <QScrollArea>
 #include <QVBoxLayout>
 #include <QWidget>
-#include <QLabel>
+
+#include "imageclickable.h"
 
 ImageDock::ImageDock(const QString& name, QWidget* parent)
     : QDockWidget(name, parent)
@@ -24,17 +25,22 @@ ImageDock::ImageDock(const QString& name, QWidget* parent)
 
 }
 
-void ImageDock::addImageList(const QList<QPixmap>& imgList){
+void ImageDock::addImageList(QList<QPixmap>& imgList){
 
     // Add images to dock layout
-    for(QList<QPixmap>::const_iterator img = imgList.begin(); img != imgList.end(); img++){
-        QLabel* w = new QLabel(this);
-        w->setPixmap(*img);
-        w->setMargin(5);
+    for(QList<QPixmap>::iterator img = imgList.begin(); img != imgList.end(); img++){
+        ImageClickable* w = new ImageClickable(&(*img), this);
         container->layout()->addWidget(w);
+
+        // Connect the label to a click event
+        QObject::connect(w, SIGNAL(clicked(QPixmap*)), this, SLOT(onLabelClick(QPixmap*)));
     }
 }
 
 void ImageDock::deleteImages(){
-    qDeleteAll(container->findChildren<QLabel*>());
+    qDeleteAll(container->findChildren<ImageClickable*>());
+}
+
+void ImageDock::onLabelClick(QPixmap *img){
+    emit imageClicked(img);
 }

@@ -59,6 +59,8 @@ void MainWindow::createDock(){
 
     dock = new ImageDock("Images List", this);
 
+    QObject::connect(dock, SIGNAL(imageClicked(QPixmap*)), this, SLOT(displayImg(QPixmap*)));
+
     addDockWidget(Qt::RightDockWidgetArea,dock);
     dock->addImageList(imagesList);
 }
@@ -97,9 +99,9 @@ void MainWindow::actionOpen(){
     }
 }
 
-/*
- * Load an image list in the docker
- */
-void MainWindow::loadImageList(const QList<QPixmap>& imageList){
-
+void MainWindow::displayImg(QPixmap* image){
+    QLabel* label = new QLabel(this);
+    label->setPixmap(*image);
+    centralArea->addSubWindow(label);
+    label->show();
 }
