@@ -16,22 +16,24 @@
 
 using namespace std;
 
+XmlLoader::XmlLoader(const QString filename){
+    _filename = filename;
+}
+
 void XmlLoader::read(std::list<Camera>& photos) {
     QFile xmlFile(_filename);
     xmlFile.open(QIODevice::ReadOnly);
     xml.setDevice(&xmlFile);
-    while(xml.readNextStartElement() && xml.name() == "Photo"){
-        Camera photo;
-        processPhoto(photo);
-        photos.push_back(photo);
+    if(xml.readNextStartElement() && xml.name() == "ATExport"){
+        processPhotos(photos);
 
-        if(xml.tokenType() == QXmlStreamReader::Invalid)
-            xml.readNext();
+    if(xml.tokenType() == QXmlStreamReader::Invalid)
+        xml.readNext();
 
-        if(xml.hasError()){
-            xml.raiseError();
-            qDebug() << errorString();
-        }
+    if(xml.hasError()){
+        xml.raiseError();
+        qDebug() << errorString();
+    }
     }
 }
 
@@ -44,12 +46,26 @@ QString XmlLoader::errorString(){
     return QString("XML file has error.");
 }
 
+void XmlLoader::processPhotos(std::list<Camera>& photos){
+    if(!xml.isStartElement() || xml.name() != "ATExport")
+        return;
+    while(xml.readNextStartElement()){
+        if(xml.name() == "Photo"){
+            Camera photo;
+            processPhoto(photo);
+            photos.push_back(photo);
+        }
+        else
+            xml.skipCurrentElement();
+    }
+}
+
 void XmlLoader::processPhoto(Camera& photo){
     if(!xml.isStartElement() || xml.name() != "Photo")
         return;
 
     while(xml.readNextStartElement()){
-
+        qDebug() << "inboucle";
         QStringRef name = xml.name();
         if(name == "ImagePath")
             processImagePath(photo);
@@ -69,8 +85,8 @@ void XmlLoader::processPhoto(Camera& photo){
             processRotation(photo);
         else if(name == "Center")
             processCenter(photo);
-
-        xml.skipCurrentElement();
+        else
+            xml.skipCurrentElement();
     }
 }
 
@@ -78,6 +94,8 @@ void XmlLoader::processImagePath(Camera &photo){
     if(!xml.isStartElement() || xml.name() != "ImagePath")
         return;
     photo.imagePath = readNextText();
+    xml.skipCurrentElement();
+    qDebug() << photo.imagePath;
 }
 
 void XmlLoader::processImageDimensions(Camera &photo){
@@ -97,24 +115,29 @@ void XmlLoader::processFocalLength(Camera &photo){
     if(!xml.isStartElement() || xml.name() != "FocalLength")
         return;
     photo.focalLength = readNextText().toDouble();
+    xml.skipCurrentElement();
+    qDebug() << photo.focalLength;
 }
 
 void XmlLoader::processCameraModelType(Camera &photo){
     if(!xml.isStartElement() || xml.name() != "CameraModelType")
         return;
     photo.modelType = readNextText();
+    xml.skipCurrentElement();
 }
 
 void XmlLoader::processAspectRatio(Camera &photo){
     if(!xml.isStartElement() || xml.name() != "AspectRatio")
         return;
     photo.aspectRatio = readNextText().toDouble();
+    xml.skipCurrentElement();
 }
 
 void XmlLoader::processSkew(Camera &photo){
     if(!xml.isStartElement() || xml.name() != "Skew")
         return;
     photo.skew = readNextText().toDouble();
+    xml.skipCurrentElement();
 }
 
 void XmlLoader::processPrincipalPoint(Camera &photo){

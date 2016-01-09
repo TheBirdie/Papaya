@@ -1,4 +1,3 @@
-#pragma once
 #include <vector>
 #include <QImage>
 #include <QFileInfo>
@@ -32,6 +31,7 @@ public:
     void read(std::list<Camera>& photos);
 
 private:
+    void processPhotos(std::list<Camera>& photos);
     void processPhoto(Camera& photo);
     void processImagePath(Camera& photo);
     void processImageDimensions(Camera& photo);
