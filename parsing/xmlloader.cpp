@@ -65,7 +65,6 @@ void XmlLoader::processPhoto(Camera& photo){
         return;
 
     while(xml.readNextStartElement()){
-        qDebug() << "inboucle";
         QStringRef name = xml.name();
         if(name == "ImagePath")
             processImagePath(photo);
@@ -95,7 +94,6 @@ void XmlLoader::processImagePath(Camera &photo){
         return;
     photo.imagePath = readNextText();
     xml.skipCurrentElement();
-    qDebug() << photo.imagePath;
 }
 
 void XmlLoader::processImageDimensions(Camera &photo){
@@ -116,7 +114,6 @@ void XmlLoader::processFocalLength(Camera &photo){
         return;
     photo.focalLength = readNextText().toDouble();
     xml.skipCurrentElement();
-    qDebug() << photo.focalLength;
 }
 
 void XmlLoader::processCameraModelType(Camera &photo){
