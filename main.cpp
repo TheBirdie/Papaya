@@ -3,8 +3,8 @@
 #include <QApplication>
 #include <iostream>
 
-#include "Scene.h"
-#include "mainwindow.h"
+#include "gui/Scene.h"
+#include "gui/mainwindow.h"
 
 int main(int argc, char** argv)
 {

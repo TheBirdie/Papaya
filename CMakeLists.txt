@@ -47,10 +47,10 @@ include_directories(${INCLUDE_DIRECTORIES})
 
 ################# CREATE THE EXECUTABLE #############################
 file(GLOB GUI_srcs
-    Scene.cpp Scene.h
-    imagedock.h imagedock.cpp
-    imageclickable.h imageclickable.cpp
-    mainwindow.h mainwindow.cpp)
+    gui/Scene.cpp gui/Scene.h
+    gui/imagedock.h gui/imagedock.cpp
+    gui/imageclickable.h gui/imageclickable.cpp
+    gui/mainwindow.h gui/mainwindow.cpp)
 file(GLOB PARSING_srcs parsing/*.h parsing/*.cpp)
 file(GLOB GLM_srcs glm/*.h) # Headers only library
 
