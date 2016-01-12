@@ -50,6 +50,7 @@ file(GLOB GUI_srcs
     gui/Scene.cpp gui/Scene.h
     gui/imagedock.h gui/imagedock.cpp
     gui/imageclickable.h gui/imageclickable.cpp
+    gui/imageviewer.h gui/imageviewer.cpp
     gui/mainwindow.h gui/mainwindow.cpp)
 file(GLOB PARSING_srcs parsing/*.h parsing/*.cpp)
 file(GLOB GLM_srcs glm/*.h) # Headers only library
