@@ -25,15 +25,15 @@ ImageDock::ImageDock(const QString& name, QWidget* parent)
 
 }
 
-void ImageDock::addImageList(QList<QPixmap>& imgList){
+void ImageDock::addImageList(QList<QImage>& imgList){
 
     // Add images to dock layout
-    for(QList<QPixmap>::iterator img = imgList.begin(); img != imgList.end(); img++){
+    for(QList<QImage>::iterator img = imgList.begin(); img != imgList.end(); img++){
         ImageClickable* w = new ImageClickable(&(*img), this);
         container->layout()->addWidget(w);
 
         // Connect the label to a click event
-        QObject::connect(w, SIGNAL(clicked(QPixmap*)), this, SLOT(onLabelClick(QPixmap*)));
+        QObject::connect(w, SIGNAL(clicked(QImage*)), this, SLOT(onLabelClick(QImage*)));
     }
 }
 
@@ -41,6 +41,6 @@ void ImageDock::deleteImages(){
     qDeleteAll(container->findChildren<ImageClickable*>());
 }
 
-void ImageDock::onLabelClick(QPixmap *img){
+void ImageDock::onLabelClick(QImage *img){
     emit imageClicked(img);
 }

@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QDockWidget>
+#include <QImage>
 
 class ImageDock : public QDockWidget
 {
@@ -10,14 +11,14 @@ class ImageDock : public QDockWidget
 public:
     ImageDock(const QString& name, QWidget *parent=0);
 
-    void addImageList(QList<QPixmap>& imgList);
+    void addImageList(QList<QImage>& imgList);
     void deleteImages();
 
 signals:
-    void imageClicked(QPixmap* img);
+    void imageClicked(QImage* img);
 
 public slots:
-    void onLabelClick(QPixmap* img);
+    void onLabelClick(QImage* img);
 
 private:
     QWidget* container;

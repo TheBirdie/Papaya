@@ -1,10 +1,12 @@
 #include "imageclickable.h"
 
-ImageClickable::ImageClickable(QPixmap* img, QWidget* parent)
+ImageClickable::ImageClickable(QImage* img, QWidget* parent)
     : QLabel(parent)
 {
     image = img;
-    setPixmap(*img);
+    miniature = QPixmap::fromImage(img->scaled(150, 100));
+
+    setPixmap(miniature);
     setMargin(5);
 }
 

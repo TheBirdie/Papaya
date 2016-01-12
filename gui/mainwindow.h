@@ -7,7 +7,7 @@
 #include <QDockWidget>
 #include <QMenuBar>
 #include <QList>
-#include <QPixmap>
+#include <QImage>
 
 #include <vector>
 
@@ -30,17 +30,17 @@ signals:
 
 public slots:
     void actionOpen();
-    void displayImg(QPixmap* img);
+    void displayImg(QImage* img);
 
 private:
     void createMenuBar();
     void createDock();
     bool openModel(const QString& fileName);
 
-    void loadImageList(const QList<QPixmap>& imageList);
+    void loadImageList(const QList<QImage>& imageList);
 
     // List of images
-    QList<QPixmap> imagesList;
+    QList<QImage> imagesList;
 };
 
 #endif // MAINWINDOW_H

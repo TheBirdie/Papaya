@@ -2,23 +2,24 @@
 #define IMAGECLICKABLE_H
 
 #include <QLabel>
-#include <QPixmap>
+#include <QImage>
 
 class ImageClickable : public QLabel
 {
     Q_OBJECT
 
 public:
-    ImageClickable(QPixmap* img, QWidget* parent = 0);
+    ImageClickable(QImage* img, QWidget* parent = 0);
 
 signals:
-    void clicked(QPixmap* img);
+    void clicked(QImage* img);
 
 protected:
     void mousePressEvent(QMouseEvent* event);
 
 private:
-    QPixmap* image;
+    QImage* image;
+    QPixmap miniature;
 
 };
 

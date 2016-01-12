@@ -11,24 +11,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     setCentralWidget(centralArea);
 
-    imagesList.append(QPixmap("imgTest.png"));
-    imagesList.append(QPixmap("imgTest.png"));
-    imagesList.append(QPixmap("imgTest.png"));
-    imagesList.append(QPixmap("imgTest.png"));
-    imagesList.append(QPixmap("imgTest.png"));
-    imagesList.append(QPixmap("imgTest.png"));
-    imagesList.append(QPixmap("imgTest.png"));
-    imagesList.append(QPixmap("imgTest.png"));
-    imagesList.append(QPixmap("imgTest.png"));
-    imagesList.append(QPixmap("imgTest.png"));
-    imagesList.append(QPixmap("imgTest.png"));
-    imagesList.append(QPixmap("imgTest.png"));
-    imagesList.append(QPixmap("imgTest.png"));
-    imagesList.append(QPixmap("imgTest.png"));
-    imagesList.append(QPixmap("imgTest.png"));
-    imagesList.append(QPixmap("imgTest.png"));
-    imagesList.append(QPixmap("imgTest.png"));
-
+    imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0706.jpg"));
+    imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0707.jpg"));
+    imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0708.jpg"));
+    imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0709.jpg"));
+    imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0710.jpg"));
+    imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0711.jpg"));
+    imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0712.jpg"));
+    imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0713.jpg"));
+    imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0714.jpg"));
+    imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0715.jpg"));
+    imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0716.jpg"));
+    imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0717.jpg"));
     createMenuBar();
     createDock();
 
@@ -59,7 +53,7 @@ void MainWindow::createDock(){
 
     dock = new ImageDock("Images List", this);
 
-    QObject::connect(dock, SIGNAL(imageClicked(QPixmap*)), this, SLOT(displayImg(QPixmap*)));
+    QObject::connect(dock, SIGNAL(imageClicked(QImage*)), this, SLOT(displayImg(QImage*)));
 
     addDockWidget(Qt::RightDockWidgetArea,dock);
     dock->addImageList(imagesList);
@@ -99,9 +93,9 @@ void MainWindow::actionOpen(){
     }
 }
 
-void MainWindow::displayImg(QPixmap* image){
+void MainWindow::displayImg(QImage* image){
     QLabel* label = new QLabel(this);
-    label->setPixmap(*image);
+    label->setPixmap(QPixmap::fromImage(*image));
     centralArea->addSubWindow(label);
     label->show();
 }
