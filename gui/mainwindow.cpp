@@ -92,6 +92,7 @@ bool MainWindow::openModel(const QString& fileName)
         a->setChecked(true);
         QObject::connect(a, SIGNAL(triggered(bool)), s, SLOT(toggleMinimize(bool)));
         QObject::connect(s, SIGNAL(destroyed(QObject*)), a, SLOT(deleteLater()));
+        QObject::connect(s, SIGNAL(pointSelected(float,float,float)), this, SLOT(actionPointSelected(float, float, float)));
         return true;
     }
     delete s;
@@ -156,4 +157,10 @@ void MainWindow::actionOpenReconstruction(){
     QString fileName = QFileDialog::getOpenFileName(this, "Open reconstruction", "", "Reconstruction files (*.xml)");
     if (!fileName.isEmpty())
         openReconstruction(fileName);
+}
+
+void MainWindow::actionPointSelected(float x, float y, float z)
+{
+    /// TODO: Find photos that have this point in LOS
+    qDebug() << "Finding photos that can see (" << x << ", " << y << ", " << z << ")";
 }

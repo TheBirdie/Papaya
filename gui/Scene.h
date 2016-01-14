@@ -18,6 +18,8 @@ protected:
   virtual void init();
   virtual void animate();
   virtual QString helpString() const;
+signals:
+  void pointSelected(float x, float y, float z);
 public slots:
   void select(const QMouseEvent *event);
   void toggleMinimize(bool state);

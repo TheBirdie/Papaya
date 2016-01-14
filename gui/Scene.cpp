@@ -80,14 +80,17 @@ void Scene::select(const QMouseEvent *event)
     QPoint clickPoint(event->x(), event->y());
     qglviewer::Vec point = camera()->pointUnderPixel(clickPoint, intersect);
     if (intersect)
-        qDebug() << "SELECT " << clickPoint << " => (" << point.x << "," << point.y << "," << point.z << ")";
+    {
+        qDebug() << "Scene: SELECT " << clickPoint << " => (" << point.x << "," << point.y << "," << point.z << ")";
+        emit pointSelected(point.x, point.y, point.z);
+    }
     else
-        qDebug() << "SELECT " << clickPoint << " => NO INTERSECTION";
+        qDebug() << "Scene: SELECT " << clickPoint << " => NO INTERSECTION";
 }
 
 void Scene::toggleMinimize(bool state){
     if(!state)
-        this->showMinimized();
+        showMinimized();
     else
         showNormal();
 }

@@ -33,6 +33,7 @@ signals:
 public slots:
     void actionOpenModel();
     void actionOpenReconstruction();
+    void actionPointSelected(float x, float y, float z);
     void displayImg(QImage const& img);
 
 private:
