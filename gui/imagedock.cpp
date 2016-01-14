@@ -4,6 +4,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include "FlowLayout.h"
 #include "imageclickable.h"
 
 ImageDock::ImageDock(const QString& name, QWidget* parent)
@@ -18,17 +19,17 @@ ImageDock::ImageDock(const QString& name, QWidget* parent)
     this->setWidget(scroll);
 
     // Inside of the scrollbar
-    container = new QWidget(scroll);
-    QVBoxLayout* layoutContainer = new QVBoxLayout(container);
-    container->setLayout(layoutContainer);
-    scroll->setWidget(container);
+    m_container = new QWidget(scroll);
+    m_layoutContainer = new FlowLayout(m_container);
+    m_container->setLayout(m_layoutContainer);
+    scroll->setWidget(m_container);
 
 }
 
 void ImageDock::addImage(QImage const& img)
 {
     ImageClickable* w = new ImageClickable(img, this);
-    container->layout()->addWidget(w);
+    m_layoutContainer->addWidget(w);
 
     // Connect the label to a click event
     QObject::connect(w, SIGNAL(clicked(QImage const&)), this, SLOT(onLabelClick(QImage const&)));
@@ -42,7 +43,7 @@ void ImageDock::addImageList(QList<QImage>& imgList){
 }
 
 void ImageDock::deleteImages(){
-    qDeleteAll(container->findChildren<ImageClickable*>());
+    qDeleteAll(m_container->findChildren<ImageClickable*>());
 }
 
 void ImageDock::onLabelClick(QImage const& img){

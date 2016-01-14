@@ -5,6 +5,9 @@
 #include <QDockWidget>
 #include <QImage>
 
+class QGridLayout;
+class FlowLayout;
+
 class ImageDock : public QDockWidget
 {
     Q_OBJECT
@@ -22,7 +25,8 @@ public slots:
     void onLabelClick(const QImage& img);
 
 private:
-    QWidget* container;
+    QWidget* m_container;
+    FlowLayout* m_layoutContainer;
 };
 
 #endif // IMAGEDOCK_H

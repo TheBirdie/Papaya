@@ -8,6 +8,7 @@
 #include <QMenuBar>
 #include <QList>
 #include <QImage>
+#include <QProgressBar>
 
 #include <vector>
 
@@ -42,13 +43,12 @@ private:
     bool openReconstruction(const QString& fileName);
     void loadImageList(const QList<QImage>& imageList);
 
-    // List of images
-    QList<QImage>   m_imagesList;
-    // List of camera views
+    // List of camera views - contains associated images
     QList<Reconstruction::Camera> m_views;
     // Viewer
     ImageViewer*    m_imageViewer;
     QMenu*          m_menu;
+    QProgressBar*   m_progressBar;
 };
 
 #endif // MAINWINDOW_H

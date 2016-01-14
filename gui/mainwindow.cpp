@@ -7,26 +7,18 @@
 #include "mainwindow.h"
 #include "parsing/xmlloader.h"
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent), m_imageViewer(NULL), centralArea(new QMdiArea()),
+    m_progressBar(new QProgressBar(this))
 {
-    m_imageViewer = NULL;
-    centralArea = new QMdiArea();
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(centralArea);
+    layout->addWidget(m_progressBar);
+    m_progressBar->hide();
+    QWidget *window = new QWidget();
+    window->setLayout(layout);
 
-    setCentralWidget(centralArea);
-
-    //foreach (Reconstruction::Camera const& c, m_views)
-    m_imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0706.jpg"));
-    m_imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0707.jpg"));
-    m_imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0708.jpg"));
-    m_imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0709.jpg"));
-    m_imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0710.jpg"));
-    m_imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0711.jpg"));
-    m_imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0712.jpg"));
-    m_imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0713.jpg"));
-    m_imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0714.jpg"));
-    m_imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0715.jpg"));
-    m_imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0716.jpg"));
-    m_imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0717.jpg"));
+    setCentralWidget(window);
 
     createDock();
     //Needs to be after create dock
@@ -71,7 +63,6 @@ void MainWindow::createDock(){
     QObject::connect(dock, SIGNAL(imageClicked(QImage const&)), this, SLOT(displayImg(QImage const&)));
 
     addDockWidget(Qt::RightDockWidgetArea,dock);
-    dock->addImageList(m_imagesList);
 }
 
 MainWindow::~MainWindow(){
@@ -111,6 +102,19 @@ bool MainWindow::openReconstruction(QString const& filename)
     // 1. Parse XML file
     Reconstruction loader(filename);
     loader.read(m_views);
+    dock->deleteImages();
+    m_progressBar->show();
+    m_progressBar->setMaximum(m_views.size());
+    m_progressBar->setValue(0);
+    qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
+    foreach (Reconstruction::Camera const& c, m_views)
+    {
+        dock->addImage(QImage(c.imagePath));
+        m_progressBar->setValue(m_progressBar->value() + 1);
+        // The loading can be long, let's update the UI to display at least the progress bar
+        qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
+    }
+    m_progressBar->hide();
     return true;
 }
 
