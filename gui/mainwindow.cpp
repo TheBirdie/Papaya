@@ -7,6 +7,7 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
+    imageViewer = NULL;
     centralArea = new QMdiArea();
 
     setCentralWidget(centralArea);
@@ -23,9 +24,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0715.jpg"));
     imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0716.jpg"));
     imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0717.jpg"));
-    createMenuBar();
-    createDock();
 
+    createDock();
+    //Needs to be after create dock
+    createMenuBar();
 }
 
 /*
@@ -40,10 +42,18 @@ void MainWindow::createMenuBar(){
     QObject::connect(open, SIGNAL(triggered()), this, SLOT(actionOpen()));
     QObject::connect(close, SIGNAL(triggered()), qApp, SLOT(quit()));
 
-    // Menu bar
-    menu = new QMenuBar(this);
-    menu->addMenu(mFile);
+    // Windows menu
+    mWindows = new QMenu("Affichage");
+    QAction* a_dock = mWindows->addAction("Dock images");
+    a_dock->setCheckable(true);
+    a_dock->setChecked(true);
 
+    QObject::connect(a_dock, SIGNAL(triggered(bool)), dock, SLOT(setVisible(bool)));
+    QObject::connect(dock, SIGNAL(visibilityChanged(bool)), a_dock, SLOT(setChecked(bool)));
+
+    // Menu bar
+    menuBar()->addMenu(mFile);
+    menuBar()->addMenu(mWindows);
 }
 
 /*
@@ -51,7 +61,7 @@ void MainWindow::createMenuBar(){
  */
 void MainWindow::createDock(){
 
-    dock = new ImageDock("Images List", this);
+    dock = new ImageDock("Dock images", this);
 
     QObject::connect(dock, SIGNAL(imageClicked(QImage*)), this, SLOT(displayImg(QImage*)));
 
@@ -59,11 +69,9 @@ void MainWindow::createDock(){
     dock->addImageList(imagesList);
 }
 
-// Penser à détruire les scenes, elles n'ont pas de parents
-// TODO : les détruires à la fermeture de la subWindow
 MainWindow::~MainWindow(){
-    for(std::vector<Scene*>::iterator i = scenes.begin(); i != scenes.end(); i++)
-        delete *i;
+    if(imageViewer != NULL)
+        delete imageViewer;
 }
 
 /*
@@ -76,8 +84,15 @@ bool MainWindow::openModel(const QString& fileName){
         scenes.push_back(s);
 
         // Add the scene in a new subwindow
-        centralArea->addSubWindow(s);
+        QMdiSubWindow* sw = centralArea->addSubWindow(s);
         s->show();
+
+        // Create an action in windows menu
+        QAction* a = mWindows->addAction(QFileInfo(fileName).fileName());
+        a->setCheckable(true);
+        a->setChecked(true);
+        QObject::connect(a, SIGNAL(triggered(bool)), s, SLOT(toggleMinimize(bool)));
+        QObject::connect(s, SIGNAL(destroyed(QObject*)), a, SLOT(deleteLater()));
     }
     else
         delete s;
@@ -94,8 +109,9 @@ void MainWindow::actionOpen(){
 }
 
 void MainWindow::displayImg(QImage* image){
-    QLabel* label = new QLabel(this);
-    label->setPixmap(QPixmap::fromImage(*image));
-    centralArea->addSubWindow(label);
-    label->show();
+    if(imageViewer == NULL)
+        imageViewer = new ImageViewer();
+
+    imageViewer->loadFile("Mouton/Mouton - AT -export undistorted photos/DSC_0706.jpg");
+    imageViewer->show();
 }

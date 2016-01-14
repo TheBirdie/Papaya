@@ -6,6 +6,10 @@
 #include "Scene.h"
 #include "parsing/objloader.h"
 
+Scene::Scene(QWidget *parent):
+    QGLViewer(parent)
+{}
+
 bool Scene::LoadModel(QString const& filename)
 {
     qDebug() << "Loading model " << filename;
@@ -72,10 +76,18 @@ QString Scene::helpString() const
 void Scene::select(const QMouseEvent *event)
 {
     bool intersect = false;
+
     QPoint clickPoint(event->x(), event->y());
     qglviewer::Vec point = camera()->pointUnderPixel(clickPoint, intersect);
     if (intersect)
         qDebug() << "SELECT " << clickPoint << " => (" << point.x << "," << point.y << "," << point.z << ")";
     else
         qDebug() << "SELECT " << clickPoint << " => NO INTERSECTION";
+}
+
+void Scene::toggleMinimize(bool state){
+    if(!state)
+        this->showMinimized();
+    else
+        showNormal();
 }

@@ -13,6 +13,7 @@
 
 #include "Scene.h"
 #include "imagedock.h"
+#include "imageviewer.h"
 
 class MainWindow : public QMainWindow
 {
@@ -24,7 +25,6 @@ public:
     std::vector<Scene*> scenes;
     QMdiArea* centralArea;
     ImageDock* dock;
-    QMenuBar* menu;
 
 signals:
 
@@ -35,12 +35,15 @@ public slots:
 private:
     void createMenuBar();
     void createDock();
-    bool openModel(const QString& fileName);
 
+    bool openModel(const QString& fileName);
     void loadImageList(const QList<QImage>& imageList);
 
     // List of images
     QList<QImage> imagesList;
+    // Viewer
+    ImageViewer* imageViewer;
+    QMenu* mWindows;
 };
 
 #endif // MAINWINDOW_H

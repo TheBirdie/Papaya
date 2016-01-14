@@ -8,7 +8,9 @@ struct ObjModel;
 
 class Scene : public QGLViewer
 {
+    Q_OBJECT
 public:
+  Scene(QWidget* parent=NULL);
   bool LoadModel(QString const& filename);
 protected:
   virtual void draw();
@@ -18,6 +20,7 @@ protected:
   virtual QString helpString() const;
 public slots:
   void select(const QMouseEvent *event);
+  void toggleMinimize(bool state);
 protected:
   Mesh m_model;
 };
