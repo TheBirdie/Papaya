@@ -1,37 +1,37 @@
-#include <vector>
+#pragma once
+
 #include <QImage>
 #include <QFileInfo>
-#include <QtCore>
-#include <camera.h>
-
-/*
- *  Gives all the information about the camera
- */
-struct Camera{
-        QString imagePath;
-        int width;
-        int height;
-        double focalLength;
-        QString modelType;
-        double aspectRatio;
-        double skew;
-        double principalPoint[2];
-        double rotation[3][3];
-        double center[3];
-};
+#include <QList>
+#include <QXmlStreamReader>
 
 
-class XmlLoader{
+class Reconstruction{
 public:
-    XmlLoader(const QString filename);
+    // Structure to hold one data entry from XML file
+    struct Camera{
+            QString imagePath;
+            QImage image;
+            int width;
+            int height;
+            double focalLength;
+            QString modelType;
+            double aspectRatio;
+            double skew;
+            double principalPoint[2];
+            double rotation[3][3];
+            double center[3];
+    };
+
+    Reconstruction(const QString filename);
 
     /*
-     * Read the XML file and add all the cameras informations in the list photos
+     * Read the XML file and add all the cameras informations in the photos QList
      */
-    void read(std::list<Camera>& photos);
+    void read(QList<Camera>& photos);
 
 private:
-    void processPhotos(std::list<Camera>& photos);
+    void processPhotos(QList<Camera>& photos);
     void processPhoto(Camera& photo);
     void processImagePath(Camera& photo);
     void processImageDimensions(Camera& photo);

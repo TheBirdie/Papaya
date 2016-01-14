@@ -16,11 +16,11 @@
 
 using namespace std;
 
-XmlLoader::XmlLoader(const QString filename){
+Reconstruction::Reconstruction(const QString filename){
     _filename = filename;
 }
 
-void XmlLoader::read(std::list<Camera>& photos) {
+void Reconstruction::read(QList<Camera>& photos) {
     QFile xmlFile(_filename);
     xmlFile.open(QIODevice::ReadOnly);
     xml.setDevice(&xmlFile);
@@ -37,16 +37,16 @@ void XmlLoader::read(std::list<Camera>& photos) {
     }
 }
 
-QString XmlLoader::readNextText(){
+QString Reconstruction::readNextText(){
     xml.readNext();
     return xml.text().toString();
 }
 
-QString XmlLoader::errorString(){
+QString Reconstruction::errorString(){
     return QString("XML file has error.");
 }
 
-void XmlLoader::processPhotos(std::list<Camera>& photos){
+void Reconstruction::processPhotos(QList<Camera>& photos){
     if(!xml.isStartElement() || xml.name() != "ATExport")
         return;
     while(xml.readNextStartElement()){
@@ -60,7 +60,7 @@ void XmlLoader::processPhotos(std::list<Camera>& photos){
     }
 }
 
-void XmlLoader::processPhoto(Camera& photo){
+void Reconstruction::processPhoto(Camera& photo){
     if(!xml.isStartElement() || xml.name() != "Photo")
         return;
 
@@ -89,14 +89,14 @@ void XmlLoader::processPhoto(Camera& photo){
     }
 }
 
-void XmlLoader::processImagePath(Camera &photo){
+void Reconstruction::processImagePath(Camera &photo){
     if(!xml.isStartElement() || xml.name() != "ImagePath")
         return;
     photo.imagePath = readNextText();
     xml.skipCurrentElement();
 }
 
-void XmlLoader::processImageDimensions(Camera &photo){
+void Reconstruction::processImageDimensions(Camera &photo){
     if(!xml.isStartElement() || xml.name() != "ImageDimensions")
         return;
     while(xml.readNextStartElement()){
@@ -109,35 +109,35 @@ void XmlLoader::processImageDimensions(Camera &photo){
     }
 }
 
-void XmlLoader::processFocalLength(Camera &photo){
+void Reconstruction::processFocalLength(Camera &photo){
     if(!xml.isStartElement() || xml.name() != "FocalLength")
         return;
     photo.focalLength = readNextText().toDouble();
     xml.skipCurrentElement();
 }
 
-void XmlLoader::processCameraModelType(Camera &photo){
+void Reconstruction::processCameraModelType(Camera &photo){
     if(!xml.isStartElement() || xml.name() != "CameraModelType")
         return;
     photo.modelType = readNextText();
     xml.skipCurrentElement();
 }
 
-void XmlLoader::processAspectRatio(Camera &photo){
+void Reconstruction::processAspectRatio(Camera &photo){
     if(!xml.isStartElement() || xml.name() != "AspectRatio")
         return;
     photo.aspectRatio = readNextText().toDouble();
     xml.skipCurrentElement();
 }
 
-void XmlLoader::processSkew(Camera &photo){
+void Reconstruction::processSkew(Camera &photo){
     if(!xml.isStartElement() || xml.name() != "Skew")
         return;
     photo.skew = readNextText().toDouble();
     xml.skipCurrentElement();
 }
 
-void XmlLoader::processPrincipalPoint(Camera &photo){
+void Reconstruction::processPrincipalPoint(Camera &photo){
     if(!xml.isStartElement() || xml.name() != "PrincipalPoint")
         return;
     while(xml.readNextStartElement()){
@@ -150,7 +150,7 @@ void XmlLoader::processPrincipalPoint(Camera &photo){
     }
 }
 
-void XmlLoader::processRotation(Camera &photo){
+void Reconstruction::processRotation(Camera &photo){
     if(!xml.isStartElement() || xml.name() != "Rotation")
         return;
     while(xml.readNextStartElement()){
@@ -177,7 +177,7 @@ void XmlLoader::processRotation(Camera &photo){
     }
 }
 
-void XmlLoader::processCenter(Camera &photo){
+void Reconstruction::processCenter(Camera &photo){
     if(!xml.isStartElement() || xml.name() != "Center")
         return;
     while(xml.readNextStartElement()){

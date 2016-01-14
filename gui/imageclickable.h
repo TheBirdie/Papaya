@@ -9,16 +9,16 @@ class ImageClickable : public QLabel
     Q_OBJECT
 
 public:
-    ImageClickable(QImage* img, QWidget* parent = 0);
+    ImageClickable(QImage const& img, QWidget* parent = 0);
 
 signals:
-    void clicked(QImage* img);
+    void clicked(QImage const& img);
 
 protected:
     void mousePressEvent(QMouseEvent* event);
 
 private:
-    QImage* image;
+    QImage const& image;
     QPixmap miniature;
 
 };

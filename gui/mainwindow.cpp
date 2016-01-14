@@ -1,29 +1,32 @@
-#include "mainwindow.h"
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QPushButton>
 #include <QScrollArea>
 #include <QFileDialog>
 
+#include "mainwindow.h"
+#include "parsing/xmlloader.h"
+
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-    imageViewer = NULL;
+    m_imageViewer = NULL;
     centralArea = new QMdiArea();
 
     setCentralWidget(centralArea);
 
-    imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0706.jpg"));
-    imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0707.jpg"));
-    imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0708.jpg"));
-    imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0709.jpg"));
-    imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0710.jpg"));
-    imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0711.jpg"));
-    imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0712.jpg"));
-    imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0713.jpg"));
-    imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0714.jpg"));
-    imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0715.jpg"));
-    imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0716.jpg"));
-    imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0717.jpg"));
+    //foreach (Reconstruction::Camera const& c, m_views)
+    m_imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0706.jpg"));
+    m_imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0707.jpg"));
+    m_imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0708.jpg"));
+    m_imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0709.jpg"));
+    m_imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0710.jpg"));
+    m_imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0711.jpg"));
+    m_imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0712.jpg"));
+    m_imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0713.jpg"));
+    m_imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0714.jpg"));
+    m_imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0715.jpg"));
+    m_imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0716.jpg"));
+    m_imagesList.append(QImage("Mouton/Mouton - AT -export undistorted photos/DSC_0717.jpg"));
 
     createDock();
     //Needs to be after create dock
@@ -36,15 +39,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 void MainWindow::createMenuBar(){
     // File menu
     QMenu* mFile = new QMenu("Fichier");
-    QAction* open = mFile->addAction("Ouvrir");
+    QAction* openModel = mFile->addAction("Ouvrir modèle 3D");
+    QAction* openReconstr = mFile->addAction("Ouvrir photos de reconstruction");
     QAction* close = mFile->addAction("Quitter");
 
-    QObject::connect(open, SIGNAL(triggered()), this, SLOT(actionOpen()));
+    QObject::connect(openModel, SIGNAL(triggered()), this, SLOT(actionOpenModel()));
+    QObject::connect(openReconstr, SIGNAL(triggered()), this, SLOT(actionOpenReconstruction()));
     QObject::connect(close, SIGNAL(triggered()), qApp, SLOT(quit()));
 
     // Windows menu
-    mWindows = new QMenu("Affichage");
-    QAction* a_dock = mWindows->addAction("Dock images");
+    m_menu = new QMenu("Affichage");
+    QAction* a_dock = m_menu->addAction("Dock images");
     a_dock->setCheckable(true);
     a_dock->setChecked(true);
 
@@ -53,7 +58,7 @@ void MainWindow::createMenuBar(){
 
     // Menu bar
     menuBar()->addMenu(mFile);
-    menuBar()->addMenu(mWindows);
+    menuBar()->addMenu(m_menu);
 }
 
 /*
@@ -63,21 +68,22 @@ void MainWindow::createDock(){
 
     dock = new ImageDock("Dock images", this);
 
-    QObject::connect(dock, SIGNAL(imageClicked(QImage*)), this, SLOT(displayImg(QImage*)));
+    QObject::connect(dock, SIGNAL(imageClicked(QImage const&)), this, SLOT(displayImg(QImage const&)));
 
     addDockWidget(Qt::RightDockWidgetArea,dock);
-    dock->addImageList(imagesList);
+    dock->addImageList(m_imagesList);
 }
 
 MainWindow::~MainWindow(){
-    if (imageViewer)
-        delete imageViewer;
+    if (m_imageViewer)
+        delete m_imageViewer;
 }
 
 /*
  * Open a model in a new subwindow
  */
-bool MainWindow::openModel(const QString& fileName){
+bool MainWindow::openModel(const QString& fileName)
+{
     //Create a new scene
     Scene* s = new Scene;
     if (s->LoadModel(fileName))
@@ -89,7 +95,7 @@ bool MainWindow::openModel(const QString& fileName){
         s->show();
 
         // Create an action in windows menu
-        QAction* a = mWindows->addAction(QFileInfo(fileName).fileName());
+        QAction* a = m_menu->addAction(QFileInfo(fileName).fileName());
         a->setCheckable(true);
         a->setChecked(true);
         QObject::connect(a, SIGNAL(triggered(bool)), s, SLOT(toggleMinimize(bool)));
@@ -100,19 +106,34 @@ bool MainWindow::openModel(const QString& fileName){
     return false;
 }
 
+bool MainWindow::openReconstruction(QString const& filename)
+{
+    // 1. Parse XML file
+    Reconstruction loader(filename);
+    loader.read(m_views);
+    return true;
+}
+
+
 /*
  * SLOT : open a new model
  */
-void MainWindow::actionOpen(){
-    QString fileName = QFileDialog::getOpenFileName(this, "Open model", "", "Model files (*.obj)");
+void MainWindow::actionOpenModel(){
+    QString fileName = QFileDialog::getOpenFileName(this, "Open Model", "", "Model files (*.obj)");
     if (!fileName.isEmpty())
         openModel(fileName);
 }
 
-void MainWindow::displayImg(QImage* image){
-    if (!imageViewer)
-        imageViewer = new ImageViewer();
+void MainWindow::displayImg(QImage const& image){
+    if (!m_imageViewer)
+        m_imageViewer = new ImageViewer();
 
-    imageViewer->loadImage(*image);
-    imageViewer->show();
+    m_imageViewer->loadImage(image);
+    m_imageViewer->show();
+}
+
+void MainWindow::actionOpenReconstruction(){
+    QString fileName = QFileDialog::getOpenFileName(this, "Open reconstruction", "", "Reconstruction files (*.xml)");
+    if (!fileName.isEmpty())
+        openReconstruction(fileName);
 }

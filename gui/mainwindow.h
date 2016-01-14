@@ -14,12 +14,13 @@
 #include "Scene.h"
 #include "imagedock.h"
 #include "imageviewer.h"
+#include "parsing/xmlloader.h"
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(QWidget *parent = NULL);
     virtual ~MainWindow();
 
     std::vector<Scene*> scenes;
@@ -29,21 +30,25 @@ public:
 signals:
 
 public slots:
-    void actionOpen();
-    void displayImg(QImage* img);
+    void actionOpenModel();
+    void actionOpenReconstruction();
+    void displayImg(QImage const& img);
 
 private:
     void createMenuBar();
     void createDock();
 
     bool openModel(const QString& fileName);
+    bool openReconstruction(const QString& fileName);
     void loadImageList(const QList<QImage>& imageList);
 
     // List of images
-    QList<QImage> imagesList;
+    QList<QImage>   m_imagesList;
+    // List of camera views
+    QList<Reconstruction::Camera> m_views;
     // Viewer
-    ImageViewer* imageViewer;
-    QMenu* mWindows;
+    ImageViewer*    m_imageViewer;
+    QMenu*          m_menu;
 };
 
 #endif // MAINWINDOW_H

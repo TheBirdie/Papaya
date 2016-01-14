@@ -12,13 +12,14 @@ public:
     ImageDock(const QString& name, QWidget *parent=0);
 
     void addImageList(QList<QImage>& imgList);
+    void addImage(QImage const& img);
     void deleteImages();
 
 signals:
-    void imageClicked(QImage* img);
+    void imageClicked(QImage const& img);
 
 public slots:
-    void onLabelClick(QImage* img);
+    void onLabelClick(const QImage& img);
 
 private:
     QWidget* container;
