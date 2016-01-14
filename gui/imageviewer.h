@@ -42,6 +42,7 @@
 #define IMAGEVIEWER_H
 
 #include <QMainWindow>
+#include <QImage>
 
 #define QT_NO_PRINTER
 #ifndef QT_NO_PRINTER
@@ -60,6 +61,7 @@ class ImageViewer : public QMainWindow
 
 public:
     ImageViewer();
+    bool loadImage(const QImage &);
     bool loadFile(const QString &);
 
 private slots:

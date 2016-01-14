@@ -112,6 +112,6 @@ void MainWindow::displayImg(QImage* image){
     if(imageViewer == NULL)
         imageViewer = new ImageViewer();
 
-    imageViewer->loadFile("Mouton/Mouton - AT -export undistorted photos/DSC_0706.jpg");
+    imageViewer->loadImage(*image);
     imageViewer->show();
 }

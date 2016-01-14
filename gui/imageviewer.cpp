@@ -69,9 +69,16 @@ bool ImageViewer::loadFile(const QString &fileName)
     QImageReader reader(fileName);
     reader.setAutoTransform(true);
     const QImage image = reader.read();
+
+    loadImage(image);
+
+}
+
+bool ImageViewer::loadImage(const QImage& image)
+{
     if (image.isNull()) {
         QMessageBox::information(this, QGuiApplication::applicationDisplayName(),
-                                 tr("Cannot load %1.").arg(QDir::toNativeSeparators(fileName)));
+                                 tr("Cannot load image"));
         setWindowFilePath(QString());
         imageLabel->setPixmap(QPixmap());
         imageLabel->adjustSize();
@@ -87,7 +94,6 @@ bool ImageViewer::loadFile(const QString &fileName)
     if (!fitToWindowAct->isChecked())
         imageLabel->adjustSize();
 
-    setWindowFilePath(fileName);
     return true;
 }
 
