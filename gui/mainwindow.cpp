@@ -3,13 +3,14 @@
 #include <QPushButton>
 #include <QScrollArea>
 #include <QFileDialog>
+#include <qDebug>
 
 #include "mainwindow.h"
 #include "parsing/xmlloader.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), m_imageViewer(NULL), centralArea(new QMdiArea()),
-    m_progressBar(new QProgressBar(this))
+    m_progressBar(new QProgressBar(this)), m_reconstructionOpeningStatus(STATUS_IDLE)
 {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(centralArea);
@@ -99,7 +100,15 @@ bool MainWindow::openModel(const QString& fileName)
 
 bool MainWindow::openReconstruction(QString const& filename)
 {
+    if (m_reconstructionOpeningStatus != STATUS_IDLE)
+    {
+        qDebug() << "Can't open an XML file. Already loading one. Aborting.";
+        m_reconstructionOpeningStatus = STATUS_PENDING_STOP;
+        return false;
+    }
+
     // 1. Parse XML file
+    m_reconstructionOpeningStatus = STATUS_IN_PROGRESS;
     Reconstruction loader(filename);
     loader.read(m_views);
     dock->deleteImages();
@@ -107,12 +116,19 @@ bool MainWindow::openReconstruction(QString const& filename)
     m_progressBar->setMaximum(m_views.size());
     m_progressBar->setValue(0);
     qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
-    foreach (Reconstruction::Camera const& c, m_views)
+    // 2. Load images
+    for (auto& it = m_views.begin(); it != m_views.end(); ++it)
     {
-        dock->addImage(QImage(c.imagePath));
+        it->image = QImage(it->imagePath);
+        dock->addImage(it->image);
         m_progressBar->setValue(m_progressBar->value() + 1);
         // The loading can be long, let's update the UI to display at least the progress bar
-        qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
+        qApp->processEvents();
+        if (m_reconstructionOpeningStatus == STATUS_PENDING_STOP)
+        {
+            m_reconstructionOpeningStatus = STATUS_IDLE;
+            return false;
+        }
     }
     m_progressBar->hide();
     return true;

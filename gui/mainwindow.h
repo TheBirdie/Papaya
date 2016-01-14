@@ -44,7 +44,14 @@ private:
     void loadImageList(const QList<QImage>& imageList);
 
     // List of camera views - contains associated images
-    QList<Reconstruction::Camera> m_views;
+    QList<Reconstruction::Camera>   m_views;
+    enum
+    {
+        STATUS_IDLE,
+        STATUS_IN_PROGRESS,
+        STATUS_PENDING_STOP,
+    };
+    int                             m_reconstructionOpeningStatus;
     // Viewer
     ImageViewer*    m_imageViewer;
     QMenu*          m_menu;
