@@ -70,7 +70,7 @@ void MainWindow::createDock(){
 }
 
 MainWindow::~MainWindow(){
-    if(imageViewer != NULL)
+    if (imageViewer)
         delete imageViewer;
 }
 
@@ -80,11 +80,12 @@ MainWindow::~MainWindow(){
 bool MainWindow::openModel(const QString& fileName){
     //Create a new scene
     Scene* s = new Scene;
-    if(s->LoadModel(fileName)){
+    if (s->LoadModel(fileName))
+    {
         scenes.push_back(s);
 
         // Add the scene in a new subwindow
-        QMdiSubWindow* sw = centralArea->addSubWindow(s);
+        centralArea->addSubWindow(s);
         s->show();
 
         // Create an action in windows menu
@@ -93,9 +94,10 @@ bool MainWindow::openModel(const QString& fileName){
         a->setChecked(true);
         QObject::connect(a, SIGNAL(triggered(bool)), s, SLOT(toggleMinimize(bool)));
         QObject::connect(s, SIGNAL(destroyed(QObject*)), a, SLOT(deleteLater()));
+        return true;
     }
-    else
-        delete s;
+    delete s;
+    return false;
 }
 
 /*
@@ -103,13 +105,12 @@ bool MainWindow::openModel(const QString& fileName){
  */
 void MainWindow::actionOpen(){
     QString fileName = QFileDialog::getOpenFileName(this, "Open model", "", "Model files (*.obj)");
-    if(!fileName.isEmpty()){
+    if (!fileName.isEmpty())
         openModel(fileName);
-    }
 }
 
 void MainWindow::displayImg(QImage* image){
-    if(imageViewer == NULL)
+    if (!imageViewer)
         imageViewer = new ImageViewer();
 
     imageViewer->loadImage(*image);

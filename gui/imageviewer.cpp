@@ -68,10 +68,9 @@ bool ImageViewer::loadFile(const QString &fileName)
 {
     QImageReader reader(fileName);
     reader.setAutoTransform(true);
-    const QImage image = reader.read();
+    QImage image = reader.read();
 
-    loadImage(image);
-
+    return loadImage(image);
 }
 
 bool ImageViewer::loadImage(const QImage& image)
@@ -112,7 +111,9 @@ void ImageViewer::open()
     dialog.setMimeTypeFilters(mimeTypeFilters);
     dialog.selectMimeTypeFilter("image/jpeg");
 
-    while (dialog.exec() == QDialog::Accepted && !loadFile(dialog.selectedFiles().first())) {}
+    while (dialog.exec() == QDialog::Accepted && !loadFile(dialog.selectedFiles().first()))
+    {
+    }
 }
 
 void ImageViewer::print()
