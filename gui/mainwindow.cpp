@@ -184,7 +184,6 @@ void MainWindow::actionPointSelected(float x, float y, float z)
     }
     m_projectionCheckStatus = STATUS_IN_PROGRESS;
 
-    /// TODO: Find photos that have this point in LOS
     qDebug() << "Finding photos that can see (" << x << ", " << y << ", " << z << ")";
     Scene* scene = (Scene*)QObject::sender();
     m_progressBar->show();
@@ -201,7 +200,7 @@ void MainWindow::actionPointSelected(float x, float y, float z)
         qApp->processEvents();
         Vec from(c.center[0], c.center[1], c.center[2]);
         Vec to(clicked);
-        bool hit = scene->GetFirstIntersection(from, to, 0.95);
+        bool hit = scene->GetFirstIntersection(from, to, 0.99);
         if (hit)
         {
             qDebug() << "Image not in LOS: hit (" << to.x << "," << to.y << "," << to.z << ")";
