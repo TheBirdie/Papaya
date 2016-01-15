@@ -43,22 +43,18 @@ set(INCLUDE_DIRECTORIES ${INCLUDE_DIRECTORIES} ${QGLVIEWER_INCLUDE_DIR})
 set(INCLUDE_DIRECTORIES ${INCLUDE_DIRECTORIES} ${QT_QTXML_INCLUDE_DIR})
 set(INCLUDE_DIRECTORIES ${INCLUDE_DIRECTORIES} ${GLEW_INCLUDE_DIRS})
 set(INCLUDE_DIRECTORIES ${INCLUDE_DIRECTORIES} ${GLFW_INCLUDE_DIR})
+set(INCLUDE_DIRECTORIES ${INCLUDE_DIRECTORIES} "${CMAKE_SOURCE_DIR}/dep/kdtree/include")
 include_directories(${INCLUDE_DIRECTORIES})
 
 ################# CREATE THE EXECUTABLE #############################
-file(GLOB GUI_srcs
-    gui/Scene.cpp gui/Scene.h
-    gui/imagedock.h gui/imagedock.cpp
-    gui/imageclickable.h gui/imageclickable.cpp
-    gui/imageviewer.h gui/imageviewer.cpp
-    gui/flowlayout.h gui/flowlayout.cpp
-    gui/mainwindow.h gui/mainwindow.cpp)
+file(GLOB_RECURSE KDTREE_srcs dep/kdtree/*.h dep/kdtree/*.cpp)
+file(GLOB GUI_srcs gui/*.cpp gui/*.h)
 file(GLOB PARSING_srcs parsing/*.h parsing/*.cpp)
 file(GLOB GLM_srcs glm/*.h) # Headers only library
 
 add_executable(Papaya
         main.cpp 
-        ${GUI_srcs} ${PARSING_srcs} ${GLM_srcs})
+        ${GUI_srcs} ${PARSING_srcs} ${GLM_srcs} ${KDTREE_srcs})
 
 
 ################# CONFIGURE LINKED LIBRAIRIES #######################
