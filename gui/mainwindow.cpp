@@ -4,13 +4,16 @@
 #include <QScrollArea>
 #include <QFileDialog>
 #include <QDebug>
+#include <QMap>
 
 #include "mainwindow.h"
 #include "parsing/xmlloader.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), m_imageViewer(NULL), centralArea(new QMdiArea()),
-    m_progressBar(new QProgressBar(this)), m_reconstructionOpeningStatus(STATUS_IDLE)
+    m_progressBar(new QProgressBar(this)),
+    m_reconstructionOpeningStatus(STATUS_IDLE),
+    m_projectionCheckStatus(STATUS_IDLE)
 {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(centralArea);
@@ -127,11 +130,13 @@ bool MainWindow::openReconstruction(QString const& filename)
         qApp->processEvents();
         if (m_reconstructionOpeningStatus == STATUS_PENDING_STOP)
         {
+            m_progressBar->hide();
             m_reconstructionOpeningStatus = STATUS_IDLE;
             return false;
         }
     }
     m_progressBar->hide();
+    m_reconstructionOpeningStatus = STATUS_IDLE;
     return true;
 }
 
@@ -159,8 +164,65 @@ void MainWindow::actionOpenReconstruction(){
         openReconstruction(fileName);
 }
 
+class ImageDist
+{
+    public:
+        ImageDist() {}
+        ImageDist(QImage const& i, float d): image(&i), distance(d) {}
+        bool operator<(ImageDist const& other) const { return distance < other.distance; }
+        QImage const* image;
+        float distance;
+};
+
 void MainWindow::actionPointSelected(float x, float y, float z)
 {
+    if (m_projectionCheckStatus != STATUS_IDLE)
+    {
+        qDebug() << "actionPointSelected: Already processing. Aborting.";
+        m_projectionCheckStatus = STATUS_PENDING_STOP;
+        return;
+    }
+    m_projectionCheckStatus = STATUS_IN_PROGRESS;
+
     /// TODO: Find photos that have this point in LOS
     qDebug() << "Finding photos that can see (" << x << ", " << y << ", " << z << ")";
+    Scene* scene = (Scene*)QObject::sender();
+    m_progressBar->show();
+    m_progressBar->setMaximum(m_views.size());
+    m_progressBar->setValue(0);
+    dock->deleteImages();
+    qApp->processEvents();
+    Vec clicked(x, y, z);
+
+    QVector<ImageDist> images;
+    foreach (Reconstruction::Camera const& c, m_views)
+    {
+        m_progressBar->setValue(m_progressBar->value() + 1);
+        qApp->processEvents();
+        Vec from(c.center[0], c.center[1], c.center[2]);
+        Vec to(clicked);
+        bool hit = scene->GetFirstIntersection(from, to, 0.95);
+        if (hit)
+        {
+            qDebug() << "Image not in LOS: hit (" << to.x << "," << to.y << "," << to.z << ")";
+            continue;
+        }
+        float dist = (from-to).mag();
+        qDebug() << "Point in LOS: distance" << dist;
+        images.push_back(ImageDist(c.image, dist));
+        dock->addImage(c.image);
+
+        if (m_projectionCheckStatus == STATUS_PENDING_STOP)
+        {
+            m_progressBar->hide();
+            m_projectionCheckStatus = STATUS_IDLE;
+            return;
+        }
+    }
+    qSort(images);
+    dock->deleteImages();
+    foreach (ImageDist const &id, images)
+        dock->addImage(*(id.image));
+    m_progressBar->hide();
+    m_projectionCheckStatus = STATUS_IDLE;
 }

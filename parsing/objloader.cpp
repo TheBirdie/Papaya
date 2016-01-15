@@ -9,7 +9,10 @@
 #include <QString>
 #include <QImage>
 #include <QGLWidget>
+
 #include "objloader.h"
+#include "kdtree.h"
+#include "triangle.h"
 
 #define POINTS_PER_VERTEX 3
 #define TOTAL_FLOATS_IN_TRIANGLE 9
@@ -137,6 +140,18 @@ bool Mesh::LoadObjModel(const char *filename)
             m_radius = currentRadius;
         m_center[i] = (minMaxCoords[2*i+1] + minMaxCoords[2*i]) / 2;
     }
+    // Load triangles KD Tree
+    qDebug() << "Building triangles mesh for KD Tree";
+    std::vector<Triangle*> triangles;
+    for (int i = 0; i < faceIndex.size() / 3; ++i)
+        triangles.push_back(new Triangle(
+                Vec(vertices[faceIndex[3*i]].x, vertices[faceIndex[3*i]].y, vertices[faceIndex[3*i]].z),
+                Vec(vertices[faceIndex[3*i+1]].x, vertices[faceIndex[3*i+1]].y, vertices[faceIndex[3*i+1]].z),
+                Vec(vertices[faceIndex[3*i+2]].x, vertices[faceIndex[3*i+2]].y, vertices[faceIndex[3*i+2]].z)
+                                ));
+    qDebug() << "Building KD Tree";
+    m_tree.build(triangles);
+    qDebug() << "Model loaded successfully";
     return true;
 }
 

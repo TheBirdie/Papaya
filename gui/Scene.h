@@ -3,6 +3,7 @@
 
 #include <qglviewer.h>
 #include "parsing/objloader.h"
+#include "vector.h"
 
 struct ObjModel;
 
@@ -12,6 +13,7 @@ class Scene : public QGLViewer
 public:
   Scene(QWidget* parent=NULL);
   bool LoadModel(QString const& filename);
+  bool GetFirstIntersection(Vec const& from, Vec& to, double tmax) const;
 protected:
   virtual void draw();
   void drawSpiral();

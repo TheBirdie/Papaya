@@ -53,6 +53,7 @@ private:
         STATUS_PENDING_STOP,
     };
     int                             m_reconstructionOpeningStatus;
+    int                             m_projectionCheckStatus;
     // Viewer
     ImageViewer*    m_imageViewer;
     QMenu*          m_menu;

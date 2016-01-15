@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QtQuick/QtQuick>
 
+#include "kdtree.h"
 #include "Scene.h"
 #include "parsing/objloader.h"
 
@@ -93,4 +94,12 @@ void Scene::toggleMinimize(bool state){
         showMinimized();
     else
         showNormal();
+}
+
+bool Scene::GetFirstIntersection(Vec const& from, Vec& to, double tmax) const
+{
+    double t;
+    Vec unused;
+    Vec d(to - from);
+    return m_model.m_tree.hit(Ray(from, d), t, tmax, unused, to);
 }

@@ -3,6 +3,7 @@
 #include <QImage>
 #include <QFileInfo>
 #include "glm/glm.hpp"
+#include "kdtree.h"
 
 class Mesh
 {
@@ -43,4 +44,5 @@ class Mesh
     // Model general information
     float                   m_radius;
     glm::vec3               m_center;
+    KDTree                  m_tree;
 };
