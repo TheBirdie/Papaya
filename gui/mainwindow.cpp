@@ -184,6 +184,7 @@ void MainWindow::actionPointSelected(float x, float y, float z)
     }
     m_projectionCheckStatus = STATUS_IN_PROGRESS;
 
+    /// 1. Find clicked point, init interface
     qDebug() << "Finding photos that can see (" << x << ", " << y << ", " << z << ")";
     Scene* scene = (Scene*)QObject::sender();
     m_progressBar->show();
@@ -193,9 +194,11 @@ void MainWindow::actionPointSelected(float x, float y, float z)
     qApp->processEvents();
     Vec clicked(x, y, z);
 
+    /// 2. Consider each view loaded from XML
     QVector<ImageDist> images;
     foreach (Reconstruction::Camera const& c, m_views)
     {
+        /// 2.1 For each image, check LoS
         m_progressBar->setValue(m_progressBar->value() + 1);
         qApp->processEvents();
         Vec from(c.center[0], c.center[1], c.center[2]);
@@ -206,6 +209,8 @@ void MainWindow::actionPointSelected(float x, float y, float z)
             qDebug() << "Image not in LOS: hit (" << to.x << "," << to.y << "," << to.z << ")";
             continue;
         }
+        /// 2.2 Check that the point is inside the image bounds (TODO)
+        /// 2.3 Insert views that pass the tests on a vector
         float dist = (from-to).mag();
         qDebug() << "Point in LOS: distance" << dist;
         images.push_back(ImageDist(c.image, dist));
@@ -218,6 +223,7 @@ void MainWindow::actionPointSelected(float x, float y, float z)
             return;
         }
     }
+    /// 3. Display photos ordered by their distance to current 3D view
     qSort(images);
     dock->deleteImages();
     foreach (ImageDist const &id, images)
