@@ -4,7 +4,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-#include "FlowLayout.h"
+#include "flowlayout.h"
 #include "imageclickable.h"
 
 ImageDock::ImageDock(const QString& name, QWidget* parent)

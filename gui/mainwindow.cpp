@@ -3,7 +3,7 @@
 #include <QPushButton>
 #include <QScrollArea>
 #include <QFileDialog>
-#include <qDebug>
+#include <QDebug>
 
 #include "mainwindow.h"
 #include "parsing/xmlloader.h"
@@ -118,7 +118,7 @@ bool MainWindow::openReconstruction(QString const& filename)
     m_progressBar->setValue(0);
     qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
     // 2. Load images
-    for (auto& it = m_views.begin(); it != m_views.end(); ++it)
+    for (QList<Reconstruction::Camera>::iterator it = m_views.begin(); it != m_views.end(); ++it)
     {
         it->image = QImage(it->imagePath);
         dock->addImage(it->image);
