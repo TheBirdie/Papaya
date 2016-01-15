@@ -55,7 +55,7 @@ struct Triangle {
         if (v < 0 || u + v > 1) return false;
         t_temp = e2.dot(qvec) * invDet; // Set distance along ray to intersection
         if (t_temp < tmin) {
-            if (t_temp > 1e-9 ){    // Fairly arbritarily small value, scared to change
+            if (t_temp > 1e-9){    // Fairly arbritarily small value, scared to change
                 t = t_temp;         // it as it works.
                 norm = n;
                 return true;

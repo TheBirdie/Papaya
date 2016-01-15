@@ -43,7 +43,7 @@ struct AABBox {
     }
 
     // Check if ray intersects with box. Returns true/false and stores distance in t
-    bool intersection(const Ray &r, double &t) {
+    bool intersection(const Ray &r, double &t) const {
         double tx1 = (bl.x - r.origin.x)*r.direction_inv.x;
         double tx2 = (tr.x - r.origin.x)*r.direction_inv.x;
 
