@@ -60,4 +60,14 @@ private:
     QProgressBar*   m_progressBar;
 };
 
+class ImageDist
+{
+    public:
+        ImageDist() {}
+        ImageDist(Reconstruction::Camera const& cam, float d): cam(&cam), distance(d) {}
+        bool operator<(ImageDist const& other) const { return distance < other.distance; }
+        Reconstruction::Camera const* cam;
+        float distance;
+};
+
 #endif // MAINWINDOW_H

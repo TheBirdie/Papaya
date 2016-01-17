@@ -73,7 +73,7 @@ QString Scene::helpString() const
     return QString("Use SELECT + CLICK to select a 3D point");
 }
 
-
+// Emmit a signal when a point is selected on the scene
 void Scene::select(const QMouseEvent *event)
 {
     bool intersect = false;
@@ -89,6 +89,7 @@ void Scene::select(const QMouseEvent *event)
         qDebug() << "Scene: SELECT " << clickPoint << " => NO INTERSECTION";
 }
 
+// Toggle state of the widget
 void Scene::toggleMinimize(bool state){
     if(!state)
         showMinimized();
@@ -96,6 +97,7 @@ void Scene::toggleMinimize(bool state){
         showNormal();
 }
 
+// Return first intersection between a ray and the model
 bool Scene::GetFirstIntersection(Vec const& from, Vec& to, double tmax) const
 {
     double t;

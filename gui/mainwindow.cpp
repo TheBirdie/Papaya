@@ -102,6 +102,7 @@ bool MainWindow::openModel(const QString& fileName)
     return false;
 }
 
+// Open and parse and xml file (camera informations), then load images
 bool MainWindow::openReconstruction(QString const& filename)
 {
     if (m_reconstructionOpeningStatus != STATUS_IDLE)
@@ -150,6 +151,7 @@ void MainWindow::actionOpenModel(){
         openModel(fileName);
 }
 
+// Open an image on the image viewer
 void MainWindow::displayImg(QImage const& image, QString const& filename){
     if (!m_imageViewer)
         m_imageViewer = new ImageViewer();
@@ -158,21 +160,12 @@ void MainWindow::displayImg(QImage const& image, QString const& filename){
     m_imageViewer->show();
 }
 
+// Choose an xml file an open it
 void MainWindow::actionOpenReconstruction(){
     QString fileName = QFileDialog::getOpenFileName(this, "Open reconstruction", "", "Reconstruction files (*.xml)");
     if (!fileName.isEmpty())
         openReconstruction(fileName);
 }
-
-class ImageDist
-{
-    public:
-        ImageDist() {}
-        ImageDist(Reconstruction::Camera const& cam, float d): cam(&cam), distance(d) {}
-        bool operator<(ImageDist const& other) const { return distance < other.distance; }
-        Reconstruction::Camera const* cam;
-        float distance;
-};
 
 void MainWindow::actionPointSelected(float x, float y, float z)
 {

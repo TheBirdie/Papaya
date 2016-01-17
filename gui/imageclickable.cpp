@@ -9,6 +9,7 @@ ImageClickable::ImageClickable(QImage const& img, QString const& filename, QWidg
     setMargin(5);
 }
 
+// Emit signal on click
 void ImageClickable::mousePressEvent(QMouseEvent* event)
 {
     emit clicked(image, filename);

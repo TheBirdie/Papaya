@@ -35,10 +35,12 @@ void ImageDock::addImage(QImage const& img, QString const& filename)
     QObject::connect(w, SIGNAL(clicked(QImage const&, QString const&)), this, SLOT(onLabelClick(QImage const&, QString const&)));
 }
 
+// Empty the dock of previously loaded images
 void ImageDock::deleteImages(){
     qDeleteAll(m_container->findChildren<ImageClickable*>());
 }
 
+// Redirect signal with additional parameter image and filename
 void ImageDock::onLabelClick(QImage const& img, QString const& filename){
     emit imageClicked(img, filename);
 }
