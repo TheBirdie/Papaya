@@ -209,7 +209,20 @@ void MainWindow::actionPointSelected(float x, float y, float z)
             qDebug() << "Image not in LOS: hit (" << to.x << "," << to.y << "," << to.z << ")";
             continue;
         }
-        /// 2.2 Check that the point is inside the image bounds (TODO)
+
+        /// 2.2 Check that the point is inside the image bounds
+        Vec proj(0,0,0);
+        proj.x = (to-from).x*c.rotation[0][0]+(to-from).y*c.rotation[0][1]+(to-from).z*c.rotation[0][2];
+        proj.y = (to-from).x*c.rotation[1][0]+(to-from).y*c.rotation[1][1]+(to-from).z*c.rotation[1][2];
+        proj.z = (to-from).x*c.rotation[2][0]+(to-from).y*c.rotation[2][1]+(to-from).z*c.rotation[2][2];
+        int point[2];
+        point[0] = c.focalLength * proj.x/proj.z + c.principalPoint[0];
+        point[1] = c.focalLength * proj.y/proj.z + c.principalPoint[1];
+        if(point[0]<0 || point[0]>=c.width || point[1]<0 || point[1]>=c.height){
+            qDebug() << "Point not in image: point (" << point[0] << "," << point[1] << ")";
+            continue;
+        }
+
         /// 2.3 Insert views that pass the tests on a vector
         float dist = (from-to).mag();
         qDebug() << "Point in LOS: distance" << dist;
