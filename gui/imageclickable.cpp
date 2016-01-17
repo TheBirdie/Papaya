@@ -1,9 +1,9 @@
 #include "imageclickable.h"
 
-ImageClickable::ImageClickable(QImage const& img, QWidget* parent)
-    : QLabel(parent), image(img)
+ImageClickable::ImageClickable(QImage const& img, QString const& filename, QWidget* parent)
+    : QLabel(parent), image(img), filename(filename)
 {
-    miniature = QPixmap::fromImage(img.scaled(150, 100));
+    miniature = QPixmap::fromImage(img);
 
     setPixmap(miniature);
     setMargin(5);
@@ -11,5 +11,5 @@ ImageClickable::ImageClickable(QImage const& img, QWidget* parent)
 
 void ImageClickable::mousePressEvent(QMouseEvent* event)
 {
-    emit clicked(image);
+    emit clicked(image, filename);
 }

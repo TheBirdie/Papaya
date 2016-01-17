@@ -34,7 +34,7 @@ public slots:
     void actionOpenModel();
     void actionOpenReconstruction();
     void actionPointSelected(float x, float y, float z);
-    void displayImg(QImage const& img);
+    void displayImg(QImage const& img, const QString& filename);
 
 private:
     void createMenuBar();

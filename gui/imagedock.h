@@ -14,15 +14,14 @@ class ImageDock : public QDockWidget
 public:
     ImageDock(const QString& name, QWidget *parent=0);
 
-    void addImageList(QList<QImage>& imgList);
-    void addImage(QImage const& img);
+    void addImage(QImage const& img, const QString& path);
     void deleteImages();
 
 signals:
-    void imageClicked(QImage const& img);
+    void imageClicked(QImage const& img, QString const& filename);
 
 public slots:
-    void onLabelClick(const QImage& img);
+    void onLabelClick(const QImage& img, QString const& filename);
 
 private:
     QWidget* m_container;

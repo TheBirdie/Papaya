@@ -10,11 +10,9 @@
 struct Triangle {
     Vec v0, v1, v2;     // Vertex world space coordinates
     Vec e1, e2;         // Edge 1 and edge 2 of triangle
-    Vec n, t0, t1, t2;  // Triangle normal and texture coordinates
 
-    Triangle(Vec v0_, Vec v1_, Vec v2_, Vec t0_=Vec(), Vec t1_=Vec(), Vec t2_=Vec()){
-        v0=v0_, v1=v1_, v2=v2_, e1=v1-v0, e2=v2-v0, n=e1.cross(e2).norm();
-        t0=t0_, t1=t1_, t2=t2_;
+    Triangle(Vec v0_, Vec v1_, Vec v2_){
+        v0=v0_, v1=v1_, v2=v2_, e1=v1-v0, e2=v2-v0;
     }
 
     // Returns axis aligned bounding box that contains the triangle
@@ -57,7 +55,6 @@ struct Triangle {
         if (t_temp < tmin) {
             if (t_temp > 1e-9){    // Fairly arbritarily small value, scared to change
                 t = t_temp;         // it as it works.
-                norm = n;
                 return true;
             }
         }

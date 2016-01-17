@@ -64,7 +64,7 @@ void MainWindow::createDock(){
 
     dock = new ImageDock("Dock images", this);
 
-    QObject::connect(dock, SIGNAL(imageClicked(QImage const&)), this, SLOT(displayImg(QImage const&)));
+    QObject::connect(dock, SIGNAL(imageClicked(QImage const&, QString const&)), this, SLOT(displayImg(QImage const&, QString const&)));
 
     addDockWidget(Qt::RightDockWidgetArea,dock);
 }
@@ -123,8 +123,8 @@ bool MainWindow::openReconstruction(QString const& filename)
     // 2. Load images
     for (QList<Reconstruction::Camera>::iterator it = m_views.begin(); it != m_views.end(); ++it)
     {
-        it->image = QImage(it->imagePath);
-        dock->addImage(it->image);
+        it->image = QImage(it->imagePath).scaled(150, 100);
+        dock->addImage(it->image, it->imagePath);
         m_progressBar->setValue(m_progressBar->value() + 1);
         // The loading can be long, let's update the UI to display at least the progress bar
         qApp->processEvents();
@@ -150,11 +150,11 @@ void MainWindow::actionOpenModel(){
         openModel(fileName);
 }
 
-void MainWindow::displayImg(QImage const& image){
+void MainWindow::displayImg(QImage const& image, QString const& filename){
     if (!m_imageViewer)
         m_imageViewer = new ImageViewer();
 
-    m_imageViewer->loadImage(image);
+    m_imageViewer->loadFile(filename);
     m_imageViewer->show();
 }
 
@@ -168,9 +168,9 @@ class ImageDist
 {
     public:
         ImageDist() {}
-        ImageDist(QImage const& i, float d): image(&i), distance(d) {}
+        ImageDist(Reconstruction::Camera const& cam, float d): cam(&cam), distance(d) {}
         bool operator<(ImageDist const& other) const { return distance < other.distance; }
-        QImage const* image;
+        Reconstruction::Camera const* cam;
         float distance;
 };
 
@@ -213,8 +213,8 @@ void MainWindow::actionPointSelected(float x, float y, float z)
         /// 2.3 Insert views that pass the tests on a vector
         float dist = (from-to).mag();
         qDebug() << "Point in LOS: distance" << dist;
-        images.push_back(ImageDist(c.image, dist));
-        dock->addImage(c.image);
+        images.push_back(ImageDist(c, dist));
+        dock->addImage(c.image, c.imagePath);
 
         if (m_projectionCheckStatus == STATUS_PENDING_STOP)
         {
@@ -227,7 +227,7 @@ void MainWindow::actionPointSelected(float x, float y, float z)
     qSort(images);
     dock->deleteImages();
     foreach (ImageDist const &id, images)
-        dock->addImage(*(id.image));
+        dock->addImage(id.cam->image, id.cam->imagePath);
     m_progressBar->hide();
     m_projectionCheckStatus = STATUS_IDLE;
 }
