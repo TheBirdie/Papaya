@@ -217,7 +217,7 @@ void Mesh::LoadOpenGLTextures()
             qWarning() << "Unable to load texture file" << it->map_Kd.filePath();
             continue;
         }
-        it->map_Kd_gl = QGLWidget::convertToGLFormat(img);  // flipped 32bit RGBA
+        QImage map_Kd_gl = QGLWidget::convertToGLFormat(img);  // flipped 32bit RGBA
 
         // Bind the img texture...
         glGenTextures(1, &it->texHandle);
@@ -226,8 +226,8 @@ void Mesh::LoadOpenGLTextures()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, it->map_Kd_gl.width(), it->map_Kd_gl.height(), 0,
-            GL_RGBA, GL_UNSIGNED_BYTE, it->map_Kd_gl.bits());
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, map_Kd_gl.width(), map_Kd_gl.height(), 0,
+            GL_RGBA, GL_UNSIGNED_BYTE, map_Kd_gl.bits());
         qDebug() << "Texture file " << it->map_Kd.filePath() << " loaded into OpenGL texture #" << it->texHandle;
     }
 }

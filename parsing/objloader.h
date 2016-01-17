@@ -33,7 +33,6 @@ class Mesh
         GLuint texHandle;
         glm::vec3 Ka, Kd, Ks;
         QFileInfo map_Kd;
-        QImage map_Kd_gl;
         QFileInfo map_bump;
         QFileInfo bump;
     };
